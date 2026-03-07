@@ -4,6 +4,12 @@ from src.record.base_record import Record
 
 
 class FlightRecord(Record):
+    """
+    Represents a flight booking in the system.
+
+    A flight connects a client with an airline and contains
+    travel information such as date and route.
+    """
     def __init__(
         self,
         client_id: int,
@@ -12,6 +18,12 @@ class FlightRecord(Record):
         start_city: str,
         end_city: str,
     ) -> None:
+        """
+        Initialize a flight record.
+
+        The client_id and airline_id act as foreign keys,
+        linking the flight to existing client and airline records.
+        """
         super().__init__("flight")
         self.client_id = client_id
         self.airline_id = airline_id
@@ -20,6 +32,12 @@ class FlightRecord(Record):
         self.end_city = end_city
 
     def validate(self) -> None:
+        """
+        Validate the flight data.
+
+        Ensures that required fields such as route information
+        and foreign key references are present.
+        """
         if not isinstance(self.client_id, int):
             raise ValueError("Client ID must be an integer.")
         if not isinstance(self.airline_id, int):
@@ -32,6 +50,12 @@ class FlightRecord(Record):
             raise ValueError("End city is required.")
 
     def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert the flight object into a dictionary.
+
+        The date is converted to ISO format so it can be safely
+        stored in JSON format.
+        """
         return {
             "type": self.type,
             "client_id": self.client_id,
@@ -43,6 +67,9 @@ class FlightRecord(Record):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "FlightRecord":
+        """
+        Reconstruct a FlightRecord object from stored dictionary data.
+        """
         return cls(
             client_id=data["client_id"],
             airline_id=data["airline_id"],

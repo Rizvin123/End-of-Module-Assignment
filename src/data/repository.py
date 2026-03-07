@@ -280,6 +280,10 @@ class RecordRepository:
 
             match = True
             for key, value in criteria.items():
+
+                if key in ("client_id", "airline_id"):
+                    value = int(value)
+                    
                 if record.get(key) != value:
                     match = False
                     break

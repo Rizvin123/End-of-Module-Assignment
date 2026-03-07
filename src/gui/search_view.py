@@ -17,6 +17,26 @@ class SearchView(QWidget):
         super().__init__()
         self.repository = repository
         self._setup_ui()
+        self.search_fields = {
+            "client": [
+                "name",
+                "city",
+                "state",
+                "country",
+                "zip_code",
+                "phone_number"
+            ],
+            "airline": [
+                "company_name"
+            ],
+            "flight": [
+                "client_id",
+                "airline_id",
+                "start_city",
+                "end_city"
+            ]
+        }
+        self._update_fields()
 
     def _setup_ui(self):
         layout = QVBoxLayout()
@@ -27,8 +47,7 @@ class SearchView(QWidget):
         self.type_combo = QComboBox()
         self.type_combo.addItems(["client", "airline", "flight"])
 
-        self.field_input = QLineEdit()
-        self.field_input.setPlaceholderText("Field name (e.g., city, company_name)")
+        self.field_combo = QComboBox()
 
         self.value_input = QLineEdit()
         self.value_input.setPlaceholderText("Value")
@@ -37,7 +56,8 @@ class SearchView(QWidget):
 
         control_layout.addWidget(QLabel("Type:"))
         control_layout.addWidget(self.type_combo)
-        control_layout.addWidget(self.field_input)
+        control_layout.addWidget(QLabel("Field:"))
+        control_layout.addWidget(self.field_combo)
         control_layout.addWidget(self.value_input)
         control_layout.addWidget(self.search_btn)
 
@@ -47,13 +67,17 @@ class SearchView(QWidget):
         self.table = QTableWidget()
         layout.addWidget(self.table)
 
-        self.setLayout(layout)
+        self.total_label = QLabel("Results: 0")
+        layout.addWidget(self.total_label)
 
+        self.setLayout(layout)
+        self.type_combo.currentTextChanged.connect(self._update_fields)
         self.search_btn.clicked.connect(self._perform_search)
 
     def _perform_search(self):
+        self.total_label.setText("Results: 0")
         record_type = self.type_combo.currentText()
-        field = self.field_input.text().strip()
+        field = self.field_combo.currentText()
         value = self.value_input.text().strip()
 
         if not field or not value:
@@ -68,6 +92,7 @@ class SearchView(QWidget):
             return
 
         self._populate_table(results)
+        self.total_label.setText(f"Results: {len(results)}")
 
     def _populate_table(self, records):
         headers = records[0].keys()
@@ -82,3 +107,8 @@ class SearchView(QWidget):
                     col,
                     QTableWidgetItem(str(record[key]))
                 )
+    def _update_fields(self):
+        record_type = self.type_combo.currentText()
+
+        self.field_combo.clear()
+        self.field_combo.addItems(self.search_fields.get(record_type, []))

@@ -5,7 +5,8 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QTableWidget,
     QTableWidgetItem,
-    QMessageBox
+    QMessageBox,
+    QLabel
 )
 from PyQt6.QtCore import Qt
 
@@ -43,6 +44,10 @@ class FlightView(QWidget):
         btn_layout.addWidget(self.btn_refresh)
 
         layout.addLayout(btn_layout)
+
+        self.total_label = QLabel("Total Records: 0")
+        layout.addWidget(self.total_label)
+
         self.setLayout(layout)
 
         self.btn_create.clicked.connect(self._create_flight)
@@ -63,6 +68,8 @@ class FlightView(QWidget):
             self.table.setItem(row, 2, QTableWidgetItem(flight["date"]))
             self.table.setItem(row, 3, QTableWidgetItem(flight["start_city"]))
             self.table.setItem(row, 4, QTableWidgetItem(flight["end_city"]))
+        
+        self.total_label.setText(f"Total Records: {len(flights)}")
 
     def _get_selected_row(self):
         return self.table.currentRow()
@@ -76,6 +83,16 @@ class FlightView(QWidget):
         row = self._get_selected_row()
         if row < 0:
             QMessageBox.warning(self, "Warning", "Select a flight first.")
+            return
+        
+        reply = QMessageBox.question(
+            self,
+            "Confirm Delete",
+            "Are you sure you want to delete this flight?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+
+        if reply != QMessageBox.StandardButton.Yes:
             return
 
         flights = self.repository.get_all_by_type("flight")

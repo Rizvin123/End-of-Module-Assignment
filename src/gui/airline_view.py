@@ -5,7 +5,8 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QTableWidget,
     QTableWidgetItem,
-    QMessageBox
+    QMessageBox,
+    QLabel
 )
 from PyQt6.QtCore import Qt
 
@@ -45,6 +46,10 @@ class AirlineView(QWidget):
         btn_layout.addWidget(self.btn_refresh)
 
         layout.addLayout(btn_layout)
+
+        self.total_label = QLabel("Total Records: 0")
+        layout.addWidget(self.total_label)
+
         self.setLayout(layout)
 
         self._connect_signals()
@@ -63,6 +68,8 @@ class AirlineView(QWidget):
         for row, airline in enumerate(airlines):
             self.table.setItem(row, 0, QTableWidgetItem(str(airline["id"])))
             self.table.setItem(row, 1, QTableWidgetItem(airline["company_name"]))
+
+        self.total_label.setText(f"Total Records: {len(airlines)}")
 
     def _get_selected_airline_id(self):
         selected = self.table.currentRow()
@@ -91,6 +98,16 @@ class AirlineView(QWidget):
         airline_id = self._get_selected_airline_id()
         if airline_id is None:
             QMessageBox.warning(self, "Warning", "Select an airline first.")
+            return
+        
+        reply = QMessageBox.question(
+            self,
+            "Confirm Delete",
+            "Are you sure you want to delete this airline?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+
+        if reply != QMessageBox.StandardButton.Yes:
             return
 
         try:

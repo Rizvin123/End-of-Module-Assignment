@@ -5,7 +5,8 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QTableWidget,
     QTableWidgetItem,
-    QMessageBox
+    QMessageBox,
+    QLabel
 )
 from PyQt6.QtCore import Qt
 
@@ -48,6 +49,9 @@ class ClientView(QWidget):
 
         layout.addLayout(btn_layout)
 
+        self.total_label = QLabel("Total Records: 0")
+        layout.addWidget(self.total_label)
+
         self.setLayout(layout)
 
         self._connect_signals()
@@ -69,6 +73,8 @@ class ClientView(QWidget):
             self.table.setItem(row, 2, QTableWidgetItem(client["city"]))
             self.table.setItem(row, 3, QTableWidgetItem(client["country"]))
             self.table.setItem(row, 4, QTableWidgetItem(client["phone_number"]))
+
+        self.total_label.setText(f"Total Records: {len(clients)}")
 
     def _get_selected_client_id(self):
         selected = self.table.currentRow()
@@ -97,6 +103,16 @@ class ClientView(QWidget):
         client_id = self._get_selected_client_id()
         if client_id is None:
             QMessageBox.warning(self, "Warning", "Select a client first.")
+            return
+        
+        reply = QMessageBox.question(
+            self,
+            "Confirm Delete",
+            "Are you sure you want to delete this client?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+
+        if reply != QMessageBox.StandardButton.Yes:
             return
 
         try:
