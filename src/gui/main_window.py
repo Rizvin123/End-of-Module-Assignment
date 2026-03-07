@@ -1,35 +1,28 @@
-from PyQt6.QtWidgets import (
-    QMainWindow,
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QPushButton,
-    QStackedWidget
-)
-
+from PyQt6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, 
+                             QHBoxLayout, QPushButton, QStackedWidget)
 from src.gui.client_view import ClientView
 from src.gui.airline_view import AirlineView
 from src.gui.flight_view import FlightView
 from src.gui.search_view import SearchView
 
-
 class MainWindow(QMainWindow):
     def __init__(self, repository):
         super().__init__()
         self.repository = repository
-
+        self.is_dark_mode = False 
+        
         self.setWindowTitle("Travel Record Management System")
         self.resize(1000, 600)
-
         self._setup_ui()
 
     def _setup_ui(self):
         central_widget = QWidget()
-        main_layout = QHBoxLayout()
+        self.setCentralWidget(central_widget)
+        main_layout = QHBoxLayout(central_widget)
 
         # Sidebar
         sidebar_layout = QVBoxLayout()
-
+        
         self.btn_clients = QPushButton("Clients")
         self.btn_airlines = QPushButton("Airlines")
         self.btn_flights = QPushButton("Flights")
@@ -39,11 +32,17 @@ class MainWindow(QMainWindow):
         sidebar_layout.addWidget(self.btn_airlines)
         sidebar_layout.addWidget(self.btn_flights)
         sidebar_layout.addWidget(self.btn_search)
-        sidebar_layout.addStretch()
+        
+        # Pushes the toggle button to the bottom
+        sidebar_layout.addStretch() 
 
-        # Stacked Widget (content area)
+        # Night Mode Toggle
+        self.theme_btn = QPushButton("🌙 Night Mode")
+        self.theme_btn.clicked.connect(self.toggle_theme)
+        sidebar_layout.addWidget(self.theme_btn)
+
+        # Content Area
         self.stacked_widget = QStackedWidget()
-
         self.client_view = ClientView(self.repository)
         self.airline_view = AirlineView(self.repository)
         self.flight_view = FlightView(self.repository)
@@ -54,14 +53,27 @@ class MainWindow(QMainWindow):
         self.stacked_widget.addWidget(self.flight_view)
         self.stacked_widget.addWidget(self.search_view)
 
-        # Layout assembly
         main_layout.addLayout(sidebar_layout, 1)
         main_layout.addWidget(self.stacked_widget, 4)
 
-        central_widget.setLayout(main_layout)
-        self.setCentralWidget(central_widget)
-
         self._connect_signals()
+
+    def toggle_theme(self):
+        if not self.is_dark_mode:
+            # Apply Dark Styles
+            self.setStyleSheet("""
+                QWidget { background-color: #2b2b2b; color: #ffffff; }
+                QLineEdit { background-color: #3d3d3d; color: white; border: 1px solid #555; }
+                QTableWidget { background-color: #2b2b2b; gridline-color: #555; }
+                QPushButton { background-color: #444; border: 1px solid #666; padding: 5px; }
+            """)
+            self.theme_btn.setText("☀️ Day Mode")
+            self.is_dark_mode = True
+        else:
+            # Reset to Light Styles
+            self.setStyleSheet("") 
+            self.theme_btn.setText("🌙 Night Mode")
+            self.is_dark_mode = False
 
     def _connect_signals(self):
         self.btn_clients.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
