@@ -2,7 +2,7 @@
 
 Main folder - src  
 Name of the package - End-of-Module-Assignment  
-Internal version: ** TBC **  
+Internal version: 0.11  
 Version delivered: 1.0  
 
 ### What is this repository for? ###
@@ -38,10 +38,28 @@ VS Code IDE and terminal
 ### Running the scripts ###  
     End-of-Module-Assignment  
         main
-            -> src
-                -> record
-            -> README.md
-            -> requirements.txt
+            -> data
+                -> repository
+                -> storage
+            -> gui
+                -> airline_form
+                -> airline_view
+                -> client_form
+                -> client_view
+                -> flight_form
+                -> flight_view
+                -> main_window
+                -> search_view
+            -> record
+                -> airline
+                -> base_record
+                -> client
+                -> flight
+                -> record.jsonl
+            -> tests
+                -> test_models
+                -> test_repository
+                -> test_storage
         development
             -> data
                 -> repository
@@ -84,6 +102,9 @@ VS Code IDE and terminal
                 -> client
                 -> flight
                 -> record.jsonl
+0) Clone the repository from the main branch using 
+git clone https://github.com/Rizvin123/End-of-Module-Assignment.git
+
 1) Install Requirements  
 pip install -r requirements.txt  
 
