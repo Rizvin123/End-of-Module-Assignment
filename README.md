@@ -114,8 +114,8 @@ python -m src.main
 ### Context for how the tool fits into the broader ecosystem ###   
 This program can be used for educational purposes. It can be used to scale the functions to be able to input more diverse features which support the ticketing interface used by the travel agent. 
 This package can serve as a good starting point for students who are willing to get better in Python coding. 
-The functional tests gives us an idea of the efficiency of the GUI in updating the records, searching and validation. 
-This can be used for comparing functionalities and performances of other GUIs pertianing the ticketing system. 
+The functional test suite validates correctness across the model, repository, and storage layers. 
+This can be used for comparing functionalities and performances of other GUIs pertaining to the ticketing system. 
 
 ### GitHub links ###  
 https://github.com/Rizvin123/End-of-Module-Assignment
